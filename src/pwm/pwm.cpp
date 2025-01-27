@@ -1,4 +1,6 @@
 #include "pwm.hpp"
+#define RAM_ATTR __HIGH_CODE
+#define INTR_ATTR __INTERRUPT
 
 PWM::PWM(){
     GPIOB_ResetBits(PWM_PIN); // 配置PWM口 PB22

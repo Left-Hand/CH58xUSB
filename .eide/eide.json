@@ -220,7 +220,14 @@
         "RISCV_GCC": {
           "version": 2,
           "beforeBuildTasks": [],
-          "afterBuildTasks": [],
+          "afterBuildTasks": [
+            {
+              "name": "new postbuild task",
+              "disable": false,
+              "abortAfterFailed": false,
+              "command": "riscv-none-elf-objdump --source --all-headers --demangle --disassemble \"${OutDir}\\${targetName}.elf\" > \"${OutDir}\\${targetName}.lst\""
+            }
+          ],
           "global": {
             "output-debug-info": "enable",
             "arch": "rv32imac",

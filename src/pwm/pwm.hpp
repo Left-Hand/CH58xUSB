@@ -2,7 +2,7 @@
 
 #define __PWM_HPP__
 
-#include "nova.hpp"
+#include "CH58x_common.h"
 
 #define Fsys 60000000
 #define ust 60
