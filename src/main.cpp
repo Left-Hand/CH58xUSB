@@ -300,12 +300,19 @@ struct HidKeyboardDataFrame{
     // HidKeyboardDataFrame(const Modifiers _modifiers):
     //     modifiers(_modifiers){;}
 
-    HidKeyboardDataFrame(const Modifiers _modifiers, const char * str):
-        modifiers(_modifiers){
-            for(size_t i = 0; i < 6; i++){
-                keycodes[i] = ascii_to_keycode(str[i]);
-            }
+    HidKeyboardDataFrame(const char * str, const Modifiers _modifiers = Modifiers()):
+        modifiers(_modifiers)
+    {
+        for(size_t i = 0; i < 6; i++){
+            keycodes[i] = ascii_to_keycode(str[i]);
         }
+    }
+
+    HidKeyboardDataFrame(const HidKeyboardCode code, const Modifiers _modifiers = Modifiers()):
+        modifiers(_modifiers)
+    {
+        keycodes[0] = code;
+    }
     uint8_t operator [](const size_t idx) const {
         return *((const uint8_t*)this + idx);
     }
@@ -375,8 +382,8 @@ uint8_t        Idle_Value = 0x00;
 uint8_t        USB_SleepStatus = 0x00; /* USB睡眠状态 */
 
 /*鼠标键盘数据*/
-uint8_t HIDMouse[4] = {0x0, 0x0, 0x0, 0x0};
-uint8_t HIDKey[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
+// uint8_t HIDMouse[4] = {0x0, 0x0, 0x0, 0x0};
+// uint8_t HIDKey[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 /******** 用户自定义分配端点RAM ****************************************/
 __attribute__((aligned(4))) uint8_t EP0_Databuf[64 + 64 + 64]; //ep0(64)+ep4_out(64)+ep4_in(64)
 __attribute__((aligned(4))) uint8_t EP1_Databuf[64 + 64];      //ep1_out(64)+ep1_in(64)
@@ -898,15 +905,17 @@ void USB_DevTransProcess(void)
     }
 }
 
-void DevHIDMouseReport(const HidMouseDataFrame & data){
-    memcpy(HIDMouse, &data, 4);
-    memcpy(pEP2_IN_DataBuf, HIDMouse, sizeof(HIDMouse));
-    DevEP2_IN_Deal(sizeof(HIDMouse));
+void DevHIDMouseReport(const HidMouseDataFrame & data = HidMouseDataFrame()){
+    memcpy(pEP2_IN_DataBuf, &data, 4);
+    DevEP2_IN_Deal(4);
 }
-void DevHIDKeyReport(const HidKeyboardDataFrame & data){
-    memcpy(HIDKey, &data, 8);
-    memcpy(pEP1_IN_DataBuf, HIDKey, sizeof(HIDKey));
-    DevEP1_IN_Deal(sizeof(HIDKey));
+void DevHIDKeyReport(const HidKeyboardDataFrame & data = HidKeyboardDataFrame()){
+    memcpy(pEP1_IN_DataBuf, &data, 8);
+    DevEP1_IN_Deal(8);
+    DelayMs(10);
+    memset(pEP1_IN_DataBuf, 0, 8 );
+    DevEP1_IN_Deal(8);
+    DelayMs(10);
 }
 
 /*********************************************************************
@@ -995,15 +1004,31 @@ int main()
         //     {},
         //     "wch"
         // });
+
+
         mDelaymS(100);
-        DevHIDKeyReport(HidKeyboardDataFrame{
-            HidKeyboardModifiers{.left_shift_pressed = 1},
-            // {},
-            "wch"
-        });
+
+        //win + r
+        DevHIDKeyReport({"r",{.left_gui_pressed = 1}});
+
+        //delete chars
+        for(size_t i = 0; i < 6; i++){
+            DevHIDKeyReport(HidKeyboardCode::KEY_RIGHT_ARROW);
+            DevHIDKeyReport(HidKeyboardCode::KEY_BACKSPACE);
+        }
+
+        //cmd + enter
+        DevHIDKeyReport("cmd");
+        DevHIDKeyReport(HidKeyboardCode::KEY_ENTER);
+
+        //input gcc
+        DevHIDKeyReport("gcc");
+        DevHIDKeyReport(HidKeyboardCode::KEY_ENTER);
+
         mDelaymS(10);
-        DevHIDKeyReport(HidKeyboardDataFrame{
-        });
+        
+        DevHIDKeyReport();
+        while(true);
         mDelaymS(1000);
     }
 }
