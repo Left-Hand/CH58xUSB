@@ -3,6 +3,8 @@
 #include "DescrBase.hpp"
 
 
+// const uint8_t My_QueDescr[] = {0x0A, 0x06, 0x00, 0x02, 0xFF, 0x00, 0xFF, 0x40, 0x01, 0x00};
+
 struct __UsbQueDescr : public __UsbDescrBase<0x0A, UsbDescrType::Que> {
 #pragma pack(push, 1)
 // bcdUSB (0x00, 0x02): 表示USB规范版本为2.0。

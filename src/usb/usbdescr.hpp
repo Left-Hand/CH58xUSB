@@ -6,6 +6,7 @@
 #include "descr/ConfigDescr.hpp"
 #include "descr/StrDescr.hpp"
 #include "descr/LangDescr.hpp"
+#include "descr/DeviceDescr.hpp"
 
 
 namespace usb{
@@ -24,3 +25,11 @@ consteval auto make_enlang_descr() {
 }
 }
     
+
+
+namespace usb{
+consteval __UsbDeviceDescr make_device_descr(const uint8_t bMaxPacketSize, const BcdUsb bcdUsb = BcdUsb::V1_1){
+    return __UsbDeviceDescr{.bcdUSB = bcdUsb, .bMaxPacketSize = bMaxPacketSize};
+}
+
+}

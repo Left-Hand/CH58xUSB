@@ -1,11 +1,13 @@
 #pragma once
 
 #include "usb/hiddev/hiddev.hpp"
+#include "usb/descr/EndpointDescr.hpp"
 
 #include "utils.hpp"
 
-class HidKeyboard:public UsbHidDeviceIntf{
+class HidKeyboard:public UsbHidDeviceBase{
 public:
+    using UsbHidDeviceBase::UsbHidDeviceBase;
     struct Modifiers {
         #pragma pack(push, 1)
         uint8_t left_ctrl_pressed:1;
@@ -57,6 +59,15 @@ public:
     };
 
     std::span<const uint8_t> getReportDescr() const {return keyboard_descr;}
+
+    __UsbEndpointDescr getEndpointDescr() const{
+        return __UsbEndpointDescr{
+            .bEndpointAddress = ep_.iaddr(), 
+            .bmAttributes = __UsbEndpointDescr::TransferType::Interrupt,
+            .wMaxPacketSize = sizeof(DataFrame),
+            .bInterval = 10//10ms
+        };
+    }
 };
 
 using  HidKeyboardModifiers = HidKeyboard::Modifiers;

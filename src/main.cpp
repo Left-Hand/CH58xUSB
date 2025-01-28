@@ -92,8 +92,9 @@ void DevEP4_OUT_Deal(uint8_t l)
 
 #define DevEP0SIZE    0x40
 // 设备描述符
-const uint8_t MyDevDescr[] = {0x12, 0x01, 0x10, 0x01, 0x00, 0x00, 0x00, DevEP0SIZE, 0x3d, 0x41, 0x07, 0x21, 0x00, 0x00,
-                              0x00, 0x00, 0x00, 0x01};
+
+constexpr auto MyDevDescr = usb::make_device_descr(DevEP0SIZE);
+
 // 配置描述符
 const uint8_t MyCfgDescr[] = {
     // 0x09：表示配置描述符的长度，即这个描述符总共有 9 个字节。
@@ -109,19 +110,11 @@ const uint8_t MyCfgDescr[] = {
     // 0x32：表示这个配置的最大功耗，单位是 2mA，即 0x32 * 2mA = 100mA
     0x09, 0x02, 0x3b, 0x00, 0x02, 0x01, 0x00, 0xA0, 0x32, //配置描述符
     
+
+
+    
     0x09, 0x04, 0x00, 0x00, 0x01, 0x03, 0x01, 0x01, 0x00, //接口描述符,键盘
     0x09, 0x21, 0x11, 0x01, 0x00, 0x01, 0x22, 0x3e, 0x00, //HID类描述符
-
-
-    // 0x07：表示端点描述符的长度，即这个描述符总共有 7 个字节。
-    // 0x05：表示这是一个端点描述符（Endpoint Descriptor）。
-    // 0x81：表示端点地址，其中：
-    // 0x80 表示这是一个 IN 端点。
-    // 0x01 表示端点编号为 1。
-    // 0x03：表示端点的传输类型，其中：
-    // 0x03 表示这是一个中断传输（Interrupt Transfer）。
-    // 0x08, 0x00：表示端点的最大包大小，即 0x0008（8 字节）。
-    // 0x0a：表示端点的轮询间隔，即 10 毫秒。
     0x07, 0x05, 0x81, 0x03, 0x08, 0x00, 0x0a,             //端点描述符
 
     0x09, 0x04, 0x01, 0x00, 0x01, 0x03, 0x01, 0x02, 0x00, //接口描述符,鼠标
@@ -144,11 +137,15 @@ constexpr auto MyManuInfo = usb::make_str_descr("wch.cn");
 // 产品信息
 const auto MyProdInfo = usb::make_str_descr("CH57x");
 
+Endpoint ep0{0};
+Endpoint ep1{1};
+Endpoint ep2{2};
+Endpoint ep3{3};
 
 
-HidMouse mouse;
-HidKeyboard keyboard;
-HidJoytick joytick;
+HidKeyboard keyboard{ep1};
+HidMouse mouse{ep2};
+HidJoytick joytick{ep3};
 
 
 /**********************************************************/
@@ -160,14 +157,7 @@ uint8_t        Report_Value = 0x00;
 uint8_t        Idle_Value = 0x00;
 uint8_t        USB_SleepStatus = 0x00; /* USB睡眠状态 */
 
-/*鼠标键盘数据*/
-// uint8_t HIDMouse[4] = {0x0, 0x0, 0x0, 0x0};
-// uint8_t HIDKey[8] = {0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0};
 /******** 用户自定义分配端点RAM ****************************************/
-__attribute__((aligned(4))) uint8_t EP0_Databuf[64 + 64 + 64]; //ep0(64)+ep4_out(64)+ep4_in(64)
-__attribute__((aligned(4))) uint8_t EP1_Databuf[64 + 64];      //ep1_out(64)+ep1_in(64)
-__attribute__((aligned(4))) uint8_t EP2_Databuf[64 + 64];      //ep2_out(64)+ep2_in(64)
-__attribute__((aligned(4))) uint8_t EP3_Databuf[64 + 64];      //ep3_out(64)+ep3_in(64)
 
 /*********************************************************************
  * @fn      USB_DevTransProcess
@@ -320,23 +310,23 @@ void USB_DevTransProcess(void)
                     switch(SetupReqCode)
                     {
                         case DEF_USB_SET_IDLE: /* 0x0A: SET_IDLE */
-                            Idle_Value = EP0_Databuf[3];
+                            Idle_Value = ep0.data()[3];
                             break; //这个一定要有
 
                         case DEF_USB_SET_REPORT: /* 0x09: SET_REPORT */
                             break;
 
                         case DEF_USB_SET_PROTOCOL: /* 0x0B: SET_PROTOCOL */
-                            Report_Value = EP0_Databuf[2];
+                            Report_Value = ep0.data()[2];
                             break;
 
                         case DEF_USB_GET_IDLE: /* 0x02: GET_IDLE */
-                            EP0_Databuf[0] = Idle_Value;
+                            ep0.data()[0] = Idle_Value;
                             len = 1;
                             break;
 
                         case DEF_USB_GET_PROTOCOL: /* 0x03: GET_PROTOCOL */
-                            EP0_Databuf[0] = Report_Value;
+                            ep0.data()[0] = Report_Value;
                             len = 1;
                             break;
 
@@ -355,8 +345,11 @@ void USB_DevTransProcess(void)
                         {
                             case USB_DESCR_TYP_DEVICE:
                             {
-                                pDescr = MyDevDescr;
-                                len = MyDevDescr[0];
+                                pDescr = MyDevDescr.data();
+                                len = MyDevDescr.size();
+
+                                // pDescr = &MyDevDescr[0];
+                                // len = MyDevDescr[0];
                             }
                             break;
 
@@ -391,8 +384,10 @@ void USB_DevTransProcess(void)
                             case USB_DESCR_TYP_REPORT:{
                                 if(((pSetupReqPak->wIndex) & 0xff) == 0) //接口0报表描述符
                                 {
-                                    pDescr = keyboard.getReportDescr().data(); //数据准备上传
-                                    len = sizeof(keyboard.getReportDescr().size());
+                                    // pDescr = keyboard.getReportDescr().data(); //数据准备上传
+                                    // len = keyboard.getReportDescr().size();
+                                    pDescr = keyboard_descr; //数据准备上传
+                                    len = sizeof(keyboard_descr);
                                 }
                                 else if(((pSetupReqPak->wIndex) & 0xff) == 1){ //接口1报表描述符
                                     pDescr = mouse.getReportDescr().data(); //数据准备上传
@@ -404,10 +399,12 @@ void USB_DevTransProcess(void)
                             }
                             break;
 
-                            case USB_DESCR_TYP_STRING: // 定义了获取字符串描述符
-                            {
-                                switch((pSetupReqPak->wValue) & 0xff)
-                                {
+                            case USB_DESCR_TYP_STRING:{ // 定义了获取字符串描述符
+                                switch((pSetupReqPak->wValue) & 0xff){
+                                    case 0:
+                                        pDescr = MyLangDescr.data();
+                                        len = MyLangDescr.size();
+                                        break;
                                     case 1:
                                         pDescr = MyManuInfo.data();
                                         len = MyManuInfo.size();
@@ -415,10 +412,6 @@ void USB_DevTransProcess(void)
                                     case 2:
                                         pDescr = MyProdInfo.data();
                                         len = MyProdInfo.size();
-                                        break;
-                                    case 0:
-                                        pDescr = MyLangDescr.data();
-                                        len = MyLangDescr.size();
                                         break;
                                     default:
                                         errflag = 0xFF; // 不支持的字符串描述符
@@ -719,10 +712,10 @@ int main()
     DebugInit();
     PRINT("start\n");
 
-    pEP0_RAM_Addr = EP0_Databuf;
-    pEP1_RAM_Addr = EP1_Databuf;
-    pEP2_RAM_Addr = EP2_Databuf;
-    pEP3_RAM_Addr = EP3_Databuf;
+    pEP0_RAM_Addr = ep0.data();
+    pEP1_RAM_Addr = ep1.data();
+    pEP2_RAM_Addr = ep2.data();
+    pEP3_RAM_Addr = ep3.data();
 
     USB_DeviceInit();
 
@@ -754,13 +747,10 @@ int main()
         // DevHIDMouseReport({});
         // mDelaymS(200);
 
-        // //键盘按键“wch”
-        // printf("kb\r\n");
-        // mDelaymS(1000);
-        // DevHIDKeyReport({
-        //     {},
-        //     "wch"
-        // });
+        //键盘按键“wch”
+        printf("kb\r\n");
+        mDelaymS(1000);
+        DevHIDKeyReport("wch");
 
 
         // mDelaymS(100);

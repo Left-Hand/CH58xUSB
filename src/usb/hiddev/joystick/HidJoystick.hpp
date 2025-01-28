@@ -2,8 +2,9 @@
 
 #include "usb/hiddev/hiddev.hpp"
 
-class HidJoytick:public UsbHidDeviceIntf{
+class HidJoytick:public UsbHidDeviceBase{
 public:
+    using UsbHidDeviceBase::UsbHidDeviceBase;
     struct DataFrame{
         #pragma pack(push, 1)
         int8_t throttle;

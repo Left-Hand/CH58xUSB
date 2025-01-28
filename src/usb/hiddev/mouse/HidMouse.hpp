@@ -1,9 +1,11 @@
 #pragma once
 
 #include "usb/hiddev/hiddev.hpp"
+#include "descr/EndpointDescr.hpp"
 
-class HidMouse:public UsbHidDeviceIntf{
+class HidMouse:public UsbHidDeviceBase{
 public:
+    using UsbHidDeviceBase::UsbHidDeviceBase;
     struct DataFrame{
     #pragma pack(push, 1)
 
@@ -21,5 +23,15 @@ public:
     };
 
     std::span<const uint8_t> getReportDescr() const{return mouse_descr;}
-
+    __UsbEndpointDescr getEndpointDescr() const{
+        return __UsbEndpointDescr{
+            .bEndpointAddress = ep_.iaddr(), 
+            .bmAttributes = __UsbEndpointDescr::TransferType::Interrupt,
+            .wMaxPacketSize = sizeof(DataFrame),
+            .bInterval = 10//10ms
+        };
+    }
 };
+
+
+using HidMouseDataFrame = HidMouse::DataFrame;

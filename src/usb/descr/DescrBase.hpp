@@ -2,6 +2,7 @@
 
 #include "sys/core/platform.h"
 #include "utils.hpp"
+#include "usb/endpoint.hpp"
 
 
 template<uint8_t Length, UsbDescrType DescrType>

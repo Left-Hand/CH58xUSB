@@ -2,17 +2,37 @@
 
 #include "DescrBase.hpp"
 
-// bLength 1×Ö½Ú£¬±íÊ¾¶ËµãÃèÊö·ûµÄ³¤¶È£¬±ê×¼µÄ¶ËµãÃèÊö·ûµÄ³¤¶ÈÎª7×Ö½Ú¡£
-// bDescriptorType 1×Ö½Ú£¬±íÊ¾ÃèÊö·ûµÄÀàĞÍ£¬¶ËµãÃèÊö·ûµÄÀàĞÍ±àÂëÎª 0x05¡£
-// bEndpointAddress 1×Ö½Ú£¬±íÊ¾¸Ã¶ËµãµÄµØÖ·ºÍ·½Ïò¡£
-// bmAttributes 1×Ö½Ú£¬±íÊ¾¸Ã¶ËµãµÄÊôĞÔ£¬ÏêÏ¸¿´ÉÏ±í¡£
-// wMaxPacketSize 2×Ö½Ú£¬±íÊ¾¸Ã¶ËµãµÄÊı¾İ°ü×î´ó³¤¶È¡£
-// bInterval 1×Ö½Ú
+
+// bEndpointAddress 1å­—èŠ‚ï¼Œè¡¨ç¤ºè¯¥ç«¯ç‚¹çš„åœ°å€å’Œæ–¹å‘ã€‚
+// bmAttributes 1å­—èŠ‚ï¼Œè¡¨ç¤ºè¯¥ç«¯ç‚¹çš„å±æ€§ï¼Œè¯¦ç»†çœ‹ä¸Šè¡¨ã€‚
+// wMaxPacketSize 2å­—èŠ‚ï¼Œè¡¨ç¤ºè¯¥ç«¯ç‚¹çš„æ•°æ®åŒ…æœ€å¤§é•¿åº¦ã€‚
+// bInterval 1å­—èŠ‚
+
+
+// 0x81ï¼šè¡¨ç¤ºç«¯ç‚¹åœ°å€ï¼Œå…¶ä¸­ï¼š
+// 0x80 è¡¨ç¤ºè¿™æ˜¯ä¸€ä¸ª IN ç«¯ç‚¹ã€‚
+// 0x01 è¡¨ç¤ºç«¯ç‚¹ç¼–å·ä¸º 1ã€‚
+// 0x03ï¼šè¡¨ç¤ºç«¯ç‚¹çš„ä¼ è¾“ç±»å‹ï¼Œå…¶ä¸­ï¼š
+// 0x03 è¡¨ç¤ºè¿™æ˜¯ä¸€ä¸ªä¸­æ–­ä¼ è¾“ï¼ˆInterrupt Transferï¼‰ã€‚
+// 0x08, 0x00ï¼šè¡¨ç¤ºç«¯ç‚¹çš„æœ€å¤§åŒ…å¤§å°ï¼Œå³ 0x0008ï¼ˆ8 å­—èŠ‚ï¼‰ã€‚
+// 0x0aï¼šè¡¨ç¤ºç«¯ç‚¹çš„è½®è¯¢é—´éš”ï¼Œå³ 10 æ¯«ç§’ã€‚
+
+
+
+
+
 struct __UsbEndpointDescr : public __UsbDescrBase<7, UsbDescrType::Endpoint> {
+    enum class TransferType : uint8_t {
+        Control = 0x00,
+        Isochronous = 0x01,
+        Bulk = 0x02,
+        Interrupt = 0x03
+    };
+
 #pragma pack(push, 1)
-    uint8_t  bEndpointAddress;
-    uint8_t  bmAttributes;
-    uint16_t wMaxPacketSize;
-    uint8_t  bInterval;
+    const EndpointAddress  bEndpointAddress; //[2]
+    const TransferType bmAttributes; //[3]
+    const uint16_t wMaxPacketSize; //[5:4] 
+    const EndpointInvervalMs  bInterval; //[6]
 #pragma pack(pop)
 };

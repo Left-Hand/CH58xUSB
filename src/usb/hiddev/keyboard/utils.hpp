@@ -4,21 +4,6 @@
 
 #include "usb/utils.hpp"
 
-struct HidMouseDataFrame:public U8Intf{
-    #pragma pack(push, 1)
-
-    uint8_t left_click:1;
-    uint8_t right_click:1;
-    uint8_t middle_click:1;
-    const uint8_t __resv__:5 = 0;
-
-    int8_t x_delta;
-    int8_t y_delta;
-    int8_t wheel_delta;
-    
-
-    #pragma pack(pop)
-};
 
 enum class HidKeyboardCode:uint8_t{
     KEY_A = 0x04,

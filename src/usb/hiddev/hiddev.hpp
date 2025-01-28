@@ -3,9 +3,14 @@
 #include "sys/core/platform.h"
 #include "hiddescr.hpp"
 #include <span>
+#include "usb/endpoint.hpp"
 
-
-class UsbHidDeviceIntf{
+class UsbHidDeviceBase{
+protected:
+    Endpoint & ep_;
 public:
-    // virtual std::span<const uint8_t> getReportDescr() const = 0;
+    UsbHidDeviceBase(Endpoint & ep):ep_(ep){;}
+    virtual std::span<const uint8_t> getReportDescr() const = 0;
+
+
 };
