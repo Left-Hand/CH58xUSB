@@ -12,9 +12,11 @@
 
 #include "CH58x_common.h"
 
-#include "usb/hiddev.hpp"
+#include "usb/hiddev/hiddev.hpp"
 #include "usb/usbdescr.hpp"
-#include "usb/hid_keyboard/HidKeyboard.hpp"
+#include "usb/hiddev/keyboard/HidKeyboard.hpp"
+#include "usb/hiddev/mouse/HidMouse.hpp"
+#include "usb/hiddev/joystick/HidJoystick.hpp"
 
 /*********************************************************************
  * @fn      DevEP1_OUT_Deal
@@ -144,9 +146,9 @@ const auto MyProdInfo = usb::make_str_descr("CH57x");
 
 
 
-UsbHidMouse mouse;
+HidMouse mouse;
 HidKeyboard keyboard;
-UsbHidJoytick joytick;
+HidJoytick joytick;
 
 
 /**********************************************************/

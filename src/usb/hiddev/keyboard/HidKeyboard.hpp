@@ -1,6 +1,6 @@
 #pragma once
 
-#include "usb/hiddev.hpp"
+#include "usb/hiddev/hiddev.hpp"
 
 #include "utils.hpp"
 
