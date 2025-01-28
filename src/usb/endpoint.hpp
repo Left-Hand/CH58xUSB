@@ -28,10 +28,8 @@ protected:
 public:
     Endpoint(const uint8_t usb_idx, const uint8_t idx):
         usb_idx_(usb_idx), idx_(idx){}
-    // Endpoint(const uint8_t idx):idx_(idx){}
     Endpoint(const Endpoint & other) = delete;
     Endpoint(const Endpoint && other) = delete;
-    // constexpr auto addr() const{return addr_;}
     constexpr Address oaddr() const{return Address(idx_ & 0x7f);}
     constexpr Address iaddr() const{return Address(idx_ | 0x80);}
 

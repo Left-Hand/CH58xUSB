@@ -12,24 +12,33 @@
 
 
 void Endpoint::ideal(const std::span<const uint8_t> data){
-    USB1_IDEAL_IMPL(1);
-    return;
-    // switch(usb_idx_){
-        // case 1:
+    // if(usb_idx_ != 1) return;
+    // printf("%d%d\r\n", usb_idx_, idx_);
+
+
+    // if(usb_idx_ != 1) return;
+    
+    // if(idx_ != 1) return;
+    // USB1_IDEAL_IMPL(1);
+    // return;
+
+
+    switch(usb_idx_){
+        case 1:
             switch(idx_){
                 case 1: USB1_IDEAL_IMPL(1); break;
                 case 2: USB1_IDEAL_IMPL(2); break;
                 case 3: USB1_IDEAL_IMPL(3); break;
             }
-            // break;
-    //     case 2:
-    //         switch(idx_){
-    //             case 1: USB2_IDEAL_IMPL(1)
-    //             case 2: USB2_IDEAL_IMPL(2)
-    //             case 3: USB2_IDEAL_IMPL(3)
-    //         }
-    //         break;
-    // }
+            break;
+        case 2:
+            switch(idx_){
+                case 1: USB2_IDEAL_IMPL(1); break;
+                case 2: USB2_IDEAL_IMPL(2); break;
+                case 3: USB2_IDEAL_IMPL(3); break;
+            }
+            break;
+    }
 }
 
 void Endpoint::odeal(const std::span<uint8_t> data){

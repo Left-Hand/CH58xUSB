@@ -26,10 +26,10 @@ void DevHIDMouseReport(const HidMouseDataFrame & data = HidMouseDataFrame()){
 void DevHIDKeyReport(const HidKeyboardDataFrame & data = HidKeyboardDataFrame()){
     memcpy(pEP1_IN_DataBuf, &data, 8);
     DevEP1_IN_Deal(8);
-    DelayMs(10);
-    memset(pEP1_IN_DataBuf, 0, 8 );
-    DevEP1_IN_Deal(8);
-    DelayMs(10);
+    // DelayMs(10);
+    // memset(pEP1_IN_DataBuf, 0, 8 );
+    // DevEP1_IN_Deal(8);
+    // DelayMs(10);
 }
 
 /*********************************************************************
@@ -85,19 +85,19 @@ int main()
 
     while(1)
     {
-        mDelaymS(1000);
-        printf("left\r\n");
-        DevHIDMouseReport({
-            // .left_click = 1
-            // .wheel_delta = 1
-            .x_delta = 100
-            // .middle_click = 1
-        });
-        mDelaymS(100);
-        DevHIDMouseReport({
-            .x_delta = -100
-        });
-        mDelaymS(200);
+        // mDelaymS(1000);
+        // printf("left\r\n");
+        // DevHIDMouseReport({
+        //     // .left_click = 1
+        //     // .wheel_delta = 1
+        //     .x_delta = 100
+        //     // .middle_click = 1
+        // });
+        // mDelaymS(100);
+        // DevHIDMouseReport({
+        //     .x_delta = -100
+        // });
+        // mDelaymS(200);
 
         // DevHIDMouseReport({
         //     // .right_click = 1
