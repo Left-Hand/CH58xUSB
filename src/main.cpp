@@ -15,23 +15,6 @@
 #include "usb_proc.hpp"
 
 
-
-
-
-
-void DevHIDMouseReport(const HidMouseDataFrame & data = HidMouseDataFrame()){
-    memcpy(pEP2_IN_DataBuf, &data, 4);
-    DevEP2_IN_Deal(4);
-}
-void DevHIDKeyReport(const HidKeyboardDataFrame & data = HidKeyboardDataFrame()){
-    memcpy(pEP1_IN_DataBuf, &data, 8);
-    DevEP1_IN_Deal(8);
-    // DelayMs(10);
-    // memset(pEP1_IN_DataBuf, 0, 8 );
-    // DevEP1_IN_Deal(8);
-    // DelayMs(10);
-}
-
 /*********************************************************************
  * @fn      DevWakeup
  *
@@ -112,11 +95,12 @@ int main()
         //     // .middle_click = 0
         // });
         // DevHIDMouseReport({.left_click = 1});
-        mouse.report({.left_click = 1});
-        mDelaymS(100);
+        // mouse.report({.left_click = 1});
+        // mDelaymS(100);
+        // pU2EP1_RAM_Addr = usb_processer.endpoint(1).data();
         // DevHIDMouseReport({});
-        mouse.report({});
-        mDelaymS(200);
+        // mouse.report({});
+        // mDelaymS(200);
 
         //键盘按键“wch”
         // printf("kb, %d, %d\r\n", keyboard.endpoint().idx(), keyboard.endpoint().uidx());
@@ -124,15 +108,13 @@ int main()
         // printf("ub, %d, %d\r\n", usb_processer.endpoint(1).idx(), usb_processer.endpoint(1).uidx());
         // printf("device count, %d\r\n", usb_processer.getDeviceCount());
 
-        // mDelaymS(200);
-        // keyboard.report("wch");
+        mDelaymS(200);
+        keyboard.report("wch");
         // DevHIDKeyReport("wch");
-//         mDelaymS(20);
-//         keyboard.report({});
-// wchwwchwchwchwchchwchwch
-//         mouse.report({.left_click = true});
-//         mouse.report({.left_click = false});
-        // DevHIDKeyReport({});
+        mDelaymS(20);
+        keyboard.report({});
+        // mouse.report({.left_click = true});
+        // mouse.report({.left_click = false});
 
 
         // mDelaymS(100);

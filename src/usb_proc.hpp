@@ -85,6 +85,11 @@ protected:
     void handleSetup();
     void handleNonIdle();
     void handleReset();
+    void handleStdRequest();
+    void handleClrFeature();
+    void handleSetFeature();
+    void handleGetStatus();
+    void handleGetDescriptor();
 public:
     UsbProcesser(const uint8_t usb_idx):
         endpoints_{
