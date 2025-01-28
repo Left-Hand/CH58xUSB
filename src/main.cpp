@@ -79,7 +79,13 @@ int main()
 
     usb_processer.init();
 
-    USB_DeviceInit();
+    // HidKeyboard & keyboard = usb_processer.createHidDevice<HidKeyboard>();
+    HidKeyboard keyboard{usb_processer.endpoint(1)};
+    HidMouse mouse{usb_processer.endpoint(2)};
+    HidJoytick joytick{usb_processer.endpoint(3)};
+
+    usb_processer.bind(keyboard, 1);
+    usb_processer.bind(mouse, 2);
 
     PFIC_EnableIRQ(USB_IRQn);
 
@@ -105,15 +111,28 @@ int main()
         //     .x_delta = -100
         //     // .middle_click = 0
         // });
-        // mDelaymS(100);
+        // DevHIDMouseReport({.left_click = 1});
+        mouse.report({.left_click = 1});
+        mDelaymS(100);
         // DevHIDMouseReport({});
-        // mDelaymS(200);
+        mouse.report({});
+        mDelaymS(200);
 
         //键盘按键“wch”
-        printf("kb\r\n");
-        mDelaymS(1000);
+        // printf("kb, %d, %d\r\n", keyboard.endpoint().idx(), keyboard.endpoint().uidx());
+        // printf("ms, %d, %d\r\n", mouse.endpoint().idx(), mouse.endpoint().uidx());
+        // printf("ub, %d, %d\r\n", usb_processer.endpoint(1).idx(), usb_processer.endpoint(1).uidx());
+        // printf("device count, %d\r\n", usb_processer.getDeviceCount());
+
+        // mDelaymS(200);
         // keyboard.report("wch");
-        DevHIDKeyReport("wch");
+        // DevHIDKeyReport("wch");
+//         mDelaymS(20);
+//         keyboard.report({});
+// wchwwchwchwchwchchwchwch
+//         mouse.report({.left_click = true});
+//         mouse.report({.left_click = false});
+        // DevHIDKeyReport({});
 
 
         // mDelaymS(100);

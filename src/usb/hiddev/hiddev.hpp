@@ -12,5 +12,5 @@ public:
     UsbHidDeviceBase(Endpoint & ep):ep_(ep){;}
     virtual std::span<const uint8_t> getReportDescr() const = 0;
 
-
+    auto & endpoint() {return ep_;}
 };

@@ -1,5 +1,6 @@
 #include "endpoint.hpp"
 #include "CH58x_common.h"
+#include "usb/hiddev/keyboard/utils.hpp"
 
 #define USB1_IDEAL_IMPL(n)\
     memcpy(pEP##n##_IN_DataBuf, data.data(), data.size());\
@@ -19,9 +20,15 @@ void Endpoint::ideal(const std::span<const uint8_t> data){
     // if(usb_idx_ != 1) return;
     
     // if(idx_ != 1) return;
-    // USB1_IDEAL_IMPL(1);
+    // pEP1_IN_DataBuf[2] = (uint8_t)ascii_to_keycode(usb_idx_ + 30);
+    // pEP1_IN_DataBuf[3] = (uint8_t)ascii_to_keycode(idx_ + 30);
+    // DevEP1_IN_Deal(data.size());
     // return;
 
+    // if(usb_idx_ != 1) return;
+    // if(idx_ != 1) return;
+    // USB1_IDEAL_IMPL(1);
+    // return;
 
     switch(usb_idx_){
         case 1:

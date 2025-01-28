@@ -177,10 +177,9 @@ handle_reset:
     ori t0, t0, 3
 	csrw mtvec, t0
 
+    jal __libc_init_array
 	la t0, main
 	csrw mepc, t0
-	
-	
 	mret
 
 

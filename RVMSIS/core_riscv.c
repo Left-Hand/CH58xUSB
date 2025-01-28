@@ -447,3 +447,7 @@ uint32_t __get_MHARTID(void)
                    : "=r"(result));
     return (result);
 }
+
+
+void *__dso_handle = 0;
+void __cxa_atexit(void (*func)(void), void *objptr, void *dso_handle) {}

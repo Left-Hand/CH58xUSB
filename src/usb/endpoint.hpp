@@ -21,10 +21,10 @@ public:
     using InvervalMs = uint8_t;
 protected:
 
-    const uint8_t usb_idx_;
-    const uint8_t idx_;
 
     __attribute__((aligned(4))) uint8_t buf_[64 + 64 + 64];
+    const uint8_t usb_idx_;
+    const uint8_t idx_;
 public:
     Endpoint(const uint8_t usb_idx, const uint8_t idx):
         usb_idx_(usb_idx), idx_(idx){}
@@ -35,6 +35,9 @@ public:
 
     void ideal(const std::span<const uint8_t> data);
     void odeal(const std::span<uint8_t> data);
+
+    constexpr uint8_t uidx() const{return usb_idx_;}
+    constexpr uint8_t idx() const{return idx_;}
 
     const uint8_t * data() const{return buf_;}
     uint8_t * data() {return buf_;}

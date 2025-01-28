@@ -2,9 +2,7 @@
 
 UsbProcesser usb_processer{1};
 
-HidKeyboard keyboard{usb_processer.endpoint(1)};
-HidMouse mouse{usb_processer.endpoint(2)};
-HidJoytick joytick{usb_processer.endpoint(3)};
+
 
 /* USB全速模式,其他速度配置描述符 */
 static uint8_t USB_FS_OSC_DESC[sizeof(MyCfgDescr)] = {
@@ -167,18 +165,33 @@ void UsbProcesser::handleSetup(){
                         break;
 
                     case USB_DESCR_TYP_REPORT:{
+                        // const uint8_t ep_index = ((pSetupReqPak->wIndex) & 0xff);
+                        // const uint8_t dev_cnt = getDeviceCount();
+                        // if(ep_index < dev_cnt){
+                        //     auto descr = hid_devices_.at(ep_index)->getReportDescr();
+                        //     pDescr = descr.data(); //数据准备上传
+                        //     len = descr.size();
+                        // }else{
+                        //     len = 0xff;
+                        // }
+
+                        // if(ep_index < dev_cnt - 1){
+                        //     Ready = 1;//如果是最后一个设备，则置位Ready
+                        // }
+
                         if(((pSetupReqPak->wIndex) & 0xff) == 0) //接口0报表描述符
                         {
-                            pDescr = keyboard.getReportDescr().data(); //数据准备上传
-                            len = keyboard.getReportDescr().size();
+                            pDescr = hid_devices_[0]->getReportDescr().data(); //数据准备上传
+                            len = hid_devices_[0]->getReportDescr().size();
                         }
                         else if(((pSetupReqPak->wIndex) & 0xff) == 1){ //接口1报表描述符
-                            pDescr = mouse.getReportDescr().data(); //数据准备上传
-                            len = mouse.getReportDescr().size();
+                            pDescr = hid_devices_[1]->getReportDescr().data(); //数据准备上传
+                            len = hid_devices_[1]->getReportDescr().size();
                             Ready = 1; //如果有更多接口，该标准位应该在最后一个接口配置完成后有效
                         }
                         else
                             len = 0xff; //本程序只有2个接口，这句话正常不可能执行
+
                     }
                     break;
 
