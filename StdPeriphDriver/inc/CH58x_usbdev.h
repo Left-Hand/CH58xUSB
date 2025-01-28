@@ -124,11 +124,6 @@ void DevEP4_IN_Deal(uint8_t l);
 void USB2_DeviceInit(void);      /* USB2设备功能初始化，4个端点，8个通道 */
 void USB2_DevTransProcess(void); /* USB2设备应答传输处理 */
 
-void U2DevEP1_OUT_Deal(uint8_t l); /* 设备端点1下传通道处理 */
-void U2DevEP2_OUT_Deal(uint8_t l); /* 设备端点2下传通道处理 */
-void U2DevEP3_OUT_Deal(uint8_t l); /* 设备端点3下传通道处理 */
-void U2DevEP4_OUT_Deal(uint8_t l); /* 设备端点4下传通道处理 */
-
 void U2DevEP1_IN_Deal(uint8_t l); /* 设备端点1上传通道处理 */
 void U2DevEP2_IN_Deal(uint8_t l); /* 设备端点2上传通道处理 */
 void U2DevEP3_IN_Deal(uint8_t l); /* 设备端点3上传通道处理 */

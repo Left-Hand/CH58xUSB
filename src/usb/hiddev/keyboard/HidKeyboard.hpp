@@ -68,6 +68,12 @@ public:
             .bInterval = 10//10ms
         };
     }
+
+
+    void report(const DataFrame & data){
+        ep_.ideal({data.data(), sizeof(DataFrame)});
+        // ep_.ideal({DataFrame{.__resv__ = 0}, sizeof(DataFrame)});
+    }
 };
 
 using  HidKeyboardModifiers = HidKeyboard::Modifiers;

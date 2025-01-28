@@ -6,7 +6,7 @@
 class HidMouse:public UsbHidDeviceBase{
 public:
     using UsbHidDeviceBase::UsbHidDeviceBase;
-    struct DataFrame{
+    struct DataFrame:public U8Intf{
     #pragma pack(push, 1)
 
     uint8_t left_click:1;
@@ -31,6 +31,11 @@ public:
             .bInterval = 10//10ms
         };
     }
+
+    void report(const DataFrame & data){
+        ep_.ideal({data.data(), sizeof(DataFrame)});
+    }
+
 };
 
 
