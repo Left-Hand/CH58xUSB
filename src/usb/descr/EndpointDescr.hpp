@@ -33,6 +33,8 @@ struct __UsbEndpointDescr : public __UsbDescrBase<7, UsbDescrType::Endpoint> {
     const EndpointAddress  bEndpointAddress; //[2]
     const TransferType bmAttributes; //[3]
     const uint16_t wMaxPacketSize; //[5:4] 
+
+    //配置实时传输，此值必须为1（ms）；若该端点配置中断传输，此值为1～255（ms）
     const EndpointInvervalMs  bInterval; //[6]
 #pragma pack(pop)
 };

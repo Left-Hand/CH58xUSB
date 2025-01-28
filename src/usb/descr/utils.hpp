@@ -15,6 +15,7 @@ enum class UsbDescrType : uint8_t {
 enum BcdUsb:uint16_t{
     V1_0 = 0x0100,
     V1_1 = 0x0110,
+    V1_12 = 0x0112,
     V2_0 = 0x0200,
     V2_1 = 0x0210,
     V3_0 = 0x0300,

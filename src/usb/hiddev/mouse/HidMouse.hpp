@@ -22,8 +22,8 @@ public:
     #pragma pack(pop)
     };
 
-    std::span<const uint8_t> getReportDescr() const{return mouse_descr;}
-    __UsbEndpointDescr getEndpointDescr() const{
+    constexpr std::span<const uint8_t> getReportDescr() const{return mouse_descr;}
+    constexpr __UsbEndpointDescr getEndpointDescr() const{
         return __UsbEndpointDescr{
             .bEndpointAddress = ep_.iaddr(), 
             .bmAttributes = __UsbEndpointDescr::TransferType::Interrupt,
@@ -32,7 +32,7 @@ public:
         };
     }
 
-    __UsbHidClassDescr getHidClassDescr() const{
+    constexpr __UsbHidClassDescr getHidClassDescr() const{
         return __UsbHidClassDescr{
             .bcdHID = BcdUsb::V1_1,
             .bCountryCode = CountryCode::None,
@@ -42,7 +42,7 @@ public:
         };
     }
 
-    __UsbInterfaceDescr getInterfaceDescr(const uint8_t interfaceNumber) const{
+    constexpr __UsbInterfaceDescr getInterfaceDescr(const uint8_t interfaceNumber) const{
         return __UsbInterfaceDescr{
             .bInterfaceNumber = interfaceNumber,
             .bAlternateSetting = 0,//√ª”–∂ÓÕ‚≈‰÷√

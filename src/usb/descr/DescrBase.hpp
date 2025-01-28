@@ -1,8 +1,6 @@
 #pragma once
 
 #include "sys/core/platform.h"
-
-
 #include "usb/descr/utils.hpp"
 
 

@@ -16,22 +16,6 @@
 
 
 /*********************************************************************
- * @fn      DevWakeup
- *
- * @brief   设备模式唤醒主机
- *
- * @return  none
- */
-void DevWakeup(void)
-{
-    R16_PIN_ANALOG_IE &= ~(RB_PIN_USB_DP_PU);
-    R8_UDEV_CTRL |= RB_UD_LOW_SPEED;
-    mDelaymS(2);
-    R8_UDEV_CTRL &= ~RB_UD_LOW_SPEED;
-    R16_PIN_ANALOG_IE |= RB_PIN_USB_DP_PU;
-}
-
-/*********************************************************************
  * @fn      DebugInit
  *
  * @brief   调试初始化
