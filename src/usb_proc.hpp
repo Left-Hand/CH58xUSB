@@ -4,9 +4,7 @@
 #include "usb/endpoint.hpp"
 #include "usb/hiddev/hiddev.hpp"
 #include "usb/usbdescr.hpp"
-#include "usb/hiddev/keyboard/HidKeyboard.hpp"
-#include "usb/hiddev/mouse/HidMouse.hpp"
-#include "usb/hiddev/joystick/HidJoystick.hpp"
+
 #include <vector>
 #include <memory>
 

@@ -14,7 +14,11 @@
 
 #include "usb_proc.hpp"
 
-
+#include "usb/hiddev/keyboard/HidKeyboard.hpp"
+#include "usb/hiddev/mouse/HidMouse.hpp"
+#include "usb/hiddev/joystick/HidJoystick.hpp"
+#include "usb/hiddev/gamepad/HidGamePad.hpp"
+#include "usb/hiddev/touchpad/HidTouchPad.hpp"
 /*********************************************************************
  * @fn      DebugInit
  *
