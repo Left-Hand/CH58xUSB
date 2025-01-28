@@ -5,6 +5,10 @@
 #include <span>
 #include "usb/endpoint.hpp"
 
+#include "descr/EndpointDescr.hpp"
+#include "descr/HidClassDescr.hpp"
+#include "descr/InterfaceDescr.hpp"
+
 class UsbHidDeviceBase{
 protected:
     Endpoint & ep_;

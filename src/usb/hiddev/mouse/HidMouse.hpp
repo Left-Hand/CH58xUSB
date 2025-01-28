@@ -1,7 +1,7 @@
 #pragma once
 
 #include "usb/hiddev/hiddev.hpp"
-#include "descr/EndpointDescr.hpp"
+
 
 class HidMouse:public UsbHidDeviceBase{
 public:
@@ -31,6 +31,29 @@ public:
             .bInterval = 10//10ms
         };
     }
+
+    __UsbHidClassDescr getHidClassDescr() const{
+        return __UsbHidClassDescr{
+            .bcdHID = BcdUsb::V1_1,
+            .bCountryCode = CountryCode::None,
+            .bNumDescriptors = 1,
+            .bDescriptorType2 = HidDescrType::Report,
+            .wDescriptorLength = uint16_t(getReportDescr().size())
+        };
+    }
+
+    __UsbInterfaceDescr getInterfaceDescr(const uint8_t interfaceNumber) const{
+        return __UsbInterfaceDescr{
+            .bInterfaceNumber = interfaceNumber,
+            .bAlternateSetting = 0,//没有额外配置
+            .bNumEndpoints = 1,//只有一个端点
+            .bInterfaceClass = UsbClassCode::HID,
+            .bInterfaceSubClass = HidSubClassCode::Boot,
+            .bInterfaceProtocol = HidProtocolCode::Mouse,
+            .iInterface = 0//为0使用默认描述
+        };
+    }
+
 
     void report(const DataFrame & data){
         ep_.ideal({data.data(), sizeof(DataFrame)});

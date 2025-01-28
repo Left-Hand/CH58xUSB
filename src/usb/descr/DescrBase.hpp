@@ -1,8 +1,9 @@
 #pragma once
 
 #include "sys/core/platform.h"
-#include "utils.hpp"
-#include "usb/endpoint.hpp"
+
+
+#include "usb/descr/utils.hpp"
 
 
 template<uint8_t Length, UsbDescrType DescrType>

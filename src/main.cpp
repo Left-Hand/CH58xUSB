@@ -72,49 +72,16 @@ int main()
 
     PFIC_EnableIRQ(USB_IRQn);
 
-    while(1)
-    {
-        // mDelaymS(1000);
-        // printf("left\r\n");
-        // DevHIDMouseReport({
-        //     // .left_click = 1
-        //     // .wheel_delta = 1
-        //     .x_delta = 100
-        //     // .middle_click = 1
-        // });
-        // mDelaymS(100);
-        // DevHIDMouseReport({
-        //     .x_delta = -100
-        // });
-        // mDelaymS(200);
-
-        // DevHIDMouseReport({
-        //     // .right_click = 1
-        //     // .wheel_delta = -1
-        //     .x_delta = -100
-        //     // .middle_click = 0
-        // });
-        // DevHIDMouseReport({.left_click = 1});
-        // mouse.report({.left_click = 1});
-        // mDelaymS(100);
-        // pU2EP1_RAM_Addr = usb_processer.endpoint(1).data();
-        // DevHIDMouseReport({});
-        // mouse.report({});
-        // mDelaymS(200);
-
-        //键盘按键“wch”
-        // printf("kb, %d, %d\r\n", keyboard.endpoint().idx(), keyboard.endpoint().uidx());
-        // printf("ms, %d, %d\r\n", mouse.endpoint().idx(), mouse.endpoint().uidx());
-        // printf("ub, %d, %d\r\n", usb_processer.endpoint(1).idx(), usb_processer.endpoint(1).uidx());
-        // printf("device count, %d\r\n", usb_processer.getDeviceCount());
+    while(1){
 
         mDelaymS(200);
         keyboard.report("wch");
-        // DevHIDKeyReport("wch");
         mDelaymS(20);
         keyboard.report({});
-        // mouse.report({.left_click = true});
-        // mouse.report({.left_click = false});
+
+        mouse.report({.left_click = true});
+        mDelaymS(20);
+        mouse.report({.left_click = false});
 
 
         // mDelaymS(100);
