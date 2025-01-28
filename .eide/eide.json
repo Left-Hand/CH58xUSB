@@ -3,18 +3,10 @@
   "type": "RISC-V",
   "dependenceList": [],
   "srcDirs": [
-    "src/ina226",
-    "src/algebra",
-    "src/gfx",
-    "src/nova",
-    "src/qc",
     "src",
-    "src/ttp229",
-    "src/pwm",
     "src/controller/KalmanFilter",
-    "src/controller/PID",
     "src/controller",
-    "src/nova/i2c"
+    "src/usb"
   ],
   "virtualFolder": {
     "name": "<virtual_root>",
@@ -205,11 +197,13 @@
           "HAL/include",
           "StdPeriphDriver/inc",
           "RVMSIS",
-          "LIB"
+          "LIB",
+          "."
         ],
         "libList": [
           "StdPeriphDriver",
-          "LIB"
+          "LIB",
+          ".."
         ],
         "defineList": [
           "DEBUG=1",
@@ -241,7 +235,7 @@
             "optimization": "level-fast",
             "warnings": "all-warnings",
             "C_FLAGS": "-Wl,-Bstatic -Wno-empty-body -Wno-deprecated-volatile",
-            "CXX_FLAGS": "-std=gnu++2b -lstdc++ -fno-rtti -flto -Wno-volatile"
+            "CXX_FLAGS": "-std=gnu++2b -fno-rtti -flto -Wno-volatile"
           },
           "asm-compiler": {
             "ASM_FLAGS": "-Wl,-Bstatic"

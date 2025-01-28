@@ -94,7 +94,8 @@
             "bit": "cpp",
             "compare": "cpp",
             "concepts": "cpp",
-            "numbers": "cpp"
+            "numbers": "cpp",
+            "span": "cpp"
         },
         "[yaml]": {
             "editor.insertSpaces": true,

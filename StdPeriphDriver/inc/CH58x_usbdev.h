@@ -66,34 +66,6 @@ void USB_DeviceInit(void);
 void USB_DevTransProcess(void);
 
 /**
- * @brief   端点1下传数据处理
- *
- * @param   l   - 待处理数据长度(<64B)
- */
-void DevEP1_OUT_Deal(uint8_t l);
-
-/**
- * @brief   端点2下传数据处理
- *
- * @param   l   - 待处理数据长度(<64B)
- */
-void DevEP2_OUT_Deal(uint8_t l);
-
-/**
- * @brief   端点3下传数据处理
- *
- * @param   l   - 待处理数据长度(<64B)
- */
-void DevEP3_OUT_Deal(uint8_t l);
-
-/**
- * @brief   端点4下传数据处理
- *
- * @param   l   - 待处理数据长度(<64B)
- */
-void DevEP4_OUT_Deal(uint8_t l);
-
-/**
  * @brief   端点1数据上传
  *
  * @param   l   - 上传数据长度(<64B)
