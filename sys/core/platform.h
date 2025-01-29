@@ -8,5 +8,4 @@
 #include <cstdint>
 
 #define HALT asm("csrrw zero, mstatus, zero");
-
 #endif

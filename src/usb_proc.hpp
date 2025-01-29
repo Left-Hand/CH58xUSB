@@ -10,52 +10,6 @@
 
 #define DevEP0SIZE    0x40
 
-
-
-
-// ÓïÑÔÃèÊö·û
-constexpr auto MyLangDescr = usb::make_enlang_descr();
-// ³§¼ÒĞÅÏ¢
-constexpr auto MyManuInfo = usb::make_str_descr("wch.cn");
-// ²úÆ·ĞÅÏ¢
-constexpr auto MyProdInfo = usb::make_str_descr("CH582m");
-
-constexpr auto MyDevDescr = usb::make_device_descr(DevEP0SIZE);
-
-
-// ÅäÖÃÃèÊö·û
-constexpr uint8_t MyCfgDescr[] = {
-    // 0x09£º±íÊ¾ÅäÖÃÃèÊö·ûµÄ³¤¶È£¬¼´Õâ¸öÃèÊö·û×Ü¹²ÓĞ 9 ¸ö×Ö½Ú¡£
-    // 0x02£º±íÊ¾ÕâÊÇÒ»¸öÅäÖÃÃèÊö·û£¨Configuration Descriptor£©¡£
-    // 0x3b, 0x00£º±íÊ¾ÅäÖÃÃèÊö·ûµÄ×Ü³¤¶È£¬¼´ 0x003B£¨59 ×Ö½Ú£©¡£
-    // 0x02£º±íÊ¾Õâ¸öÅäÖÃÖĞÓĞ 2 ¸ö½Ó¿Ú¡£
-    // 0x01£º±íÊ¾ÅäÖÃÖµ£¬ÓÃÓÚÔÚ SET_CONFIGURATION ÇëÇóÖĞÑ¡ÔñÕâ¸öÅäÖÃ¡£
-    // 0x00£º±íÊ¾ÅäÖÃ×Ö·û´®ÃèÊö·ûµÄË÷Òı£¬0 ±íÊ¾Ã»ÓĞ×Ö·û´®ÃèÊö·û¡£
-    // 0xA0£º±íÊ¾Õâ¸öÅäÖÃµÄÊôĞÔ£¬ÆäÖĞ£º
-    // 0x80 ±íÊ¾¸ÃÅäÖÃÊÇ·ñĞèÒª×ÜÏß¹©µç¡£
-    // 0x20 ±íÊ¾ÊÇ·ñÖ§³ÖÔ¶³Ì»½ĞÑ¡£
-    // 0x40 ±íÊ¾ÊÇ·ñÖ§³Ö×Ô¹©µç¡£
-    // 0x32£º±íÊ¾Õâ¸öÅäÖÃµÄ×î´ó¹¦ºÄ£¬µ¥Î»ÊÇ 2mA£¬¼´ 0x32 * 2mA = 100mA
-    0x09, 0x02, 0x3b, 0x00, 0x02, 0x01, 0x00, 0xA0, 0x32, //ÅäÖÃÃèÊö·û
-    
-
-
-    
-    0x09, 0x04, 0x00, 0x00, 0x01, 0x03, 0x01, 0x01, 0x00, //½Ó¿ÚÃèÊö·û,¼üÅÌ
-    0x09, 0x21, 0x10, 0x01, 0x00, 0x01, 0x22, 0x3e, 0x00, //HIDÀàÃèÊö·û
-    0x07, 0x05, 0x81, 0x03, 0x08, 0x00, 0x0a,             //¶ËµãÃèÊö·û
-
-    0x09, 0x04, 0x01, 0x00, 0x01, 0x03, 0x01, 0x02, 0x00, //½Ó¿ÚÃèÊö·û,Êó±ê
-    0x09, 0x21, 0x10, 0x01, 0x00, 0x01, 0x22, 0x34, 0x00, //HIDÀàÃèÊö·û
-    0x07, 0x05, 0x82, 0x03, 0x04, 0x00, 0x0a              //¶ËµãÃèÊö·û
-};
-
-/* USBËÙ¶ÈÆ¥ÅäÃèÊö·û */
-constexpr uint8_t My_QueDescr[] = {0x0A, 0x06, 0x00, 0x02, 0xFF, 0x00, 0xFF, 0x40, 0x01, 0x00};
-
-
-
-
 class UsbProcesser{
 protected:
 
@@ -69,7 +23,7 @@ protected:
     const uint8_t *pDescr;
     uint8_t        Report_Value = 0x00;
     uint8_t        Idle_Value = 0x00;
-    uint8_t        USB_SleepStatus = 0x00; /* USBË¯Ãß×´Ì¬ */
+    uint8_t        USB_SleepStatus = 0x00; /* USBç¡çœ çŠ¶æ€ */
     uint8_t len, chtype;
     uint8_t errflag = 0;
 
@@ -119,32 +73,7 @@ public:
 
         return 0;
     }
-    void handle(void){
-
-        uint8_t intflag = R8_USB_INT_FG;
-        if(intflag & RB_UIF_TRANSFER){
-            if((R8_USB_INT_ST & MASK_UIS_TOKEN) != MASK_UIS_TOKEN){ // ·Ç¿ÕÏĞ
-                handleNonIdle();
-                R8_USB_INT_FG = RB_UIF_TRANSFER;
-            }if(R8_USB_INT_ST & RB_UIS_SETUP_ACT){ // Setup°ü´¦Àí
-                handleSetup();
-                R8_USB_INT_FG = RB_UIF_TRANSFER;
-            }
-            
-        }else if(intflag & RB_UIF_BUS_RST){
-            handleReset();
-            R8_USB_INT_FG = RB_UIF_BUS_RST;
-        }else if(intflag & RB_UIF_SUSPEND){
-            if(R8_USB_MIS_ST & RB_UMS_SUSPEND){
-                // ¹ÒÆğ
-            }else{
-                // »½ĞÑ
-            }
-            R8_USB_INT_FG = RB_UIF_SUSPEND;
-        }else{
-            R8_USB_INT_FG = intflag;
-        }
-    }
+    void handle(void);
 
     auto & endpoint(const uint8_t idx){
         return endpoints_[idx];

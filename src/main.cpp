@@ -57,22 +57,21 @@ int main()
 
     usb_processer.bind(keyboard, 1);
     usb_processer.bind(mouse, 2);
+    // usb_processer.bind(joytick, 3);
 
     PFIC_EnableIRQ(USB_IRQn);
 
     while(1){
 
-        mDelaymS(200);
-        keyboard.report("wch");
-        mDelaymS(20);
-        keyboard.report({});
+        // mDelaymS(200);
+        // keyboard.report("wch");
+        // mDelaymS(20);
+        // keyboard.report({});
 
-        mouse.report({.left_click = true});
-        mDelaymS(20);
-        mouse.report({.left_click = false});
-
-
-        // mDelaymS(100);
+        // mouse.report({.left_click = true});
+        // mDelaymS(20);
+        // mouse.report({.left_click = false});
+        mDelaymS(100);
 
         // //win + r
         // DevHIDKeyReport({"r",{.left_gui_pressed = 1}});
@@ -121,3 +120,7 @@ void USB_IRQHandler(void) /* USB中断服务程序,使用寄存器组1 */
 }
 
 }
+
+
+
+
