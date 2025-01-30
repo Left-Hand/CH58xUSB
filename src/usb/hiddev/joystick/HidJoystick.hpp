@@ -5,7 +5,7 @@
 class HidJoytick:public UsbHidDeviceBase{
 public:
     using UsbHidDeviceBase::UsbHidDeviceBase;
-    struct DataFrame{
+    struct DataFrame:public U8Intf{
         #pragma pack(push, 1)
         int8_t throttle;
         int8_t x;
@@ -50,6 +50,9 @@ public:
         };
     }
 
+    void report(const DataFrame & data){
+        ep_.ideal({data.data(), sizeof(DataFrame)});
+    }
 };
 
 

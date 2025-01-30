@@ -56,7 +56,7 @@ scexpr uint8_t joystick_descr[] = {
     0x75, 0x01,        //   Report Size (1)
     0x64,              //   Unit
     0x81, 0x02,        //   Input (Data,Var,Abs,No Wrap,Linear,Preferred State,No Null Position)
-    0xC0,              // End Collection
+    0xC0              // End Collection
 };
 
 

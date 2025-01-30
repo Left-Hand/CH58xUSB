@@ -13,86 +13,91 @@ constexpr auto MyProdInfo = usb::make_str_descr("CH582m");
 constexpr auto MyDevDescr = usb::make_device_descr(DevEP0SIZE);
 
 
-// 配置描述符
+// // 配置描述符
 constexpr uint8_t MyCfgDescr[] = {
 
-    // 0x09：表示配置描述符的长度，即这个描述符总共有 9 个字节。
-    // 0x02：表示这是一个配置描述符（Configuration Descriptor）。
-    // 0x3b, 0x00：表示配置描述符的总长度，即 0x003B（59 字节）。
-    // 0x02：表示这个配置中有 2 个接口。
-    // 0x01：表示配置值，用于在 SET_CONFIGURATION 请求中选择这个配置。
-    // 0x00：表示配置字符串描述符的索引，0 表示没有字符串描述符。
-    // 0xA0：表示这个配置的属性，其中：
-    // 0x80 表示该配置是否需要总线供电。
-    // 0x20 表示是否支持远程唤醒。
-    // 0x40 表示是否支持自供电。
-    // 0x32：表示这个配置的最大功耗，单位是 2mA，即 0x32 * 2mA = 100mA
-    0x09, 0x02, 0x3b, 0x00, 0x02, 0x01, 0x00, 0xA0, 0x32, //配置描述符
-    
 
+    0x09, //bLength 描述符的字节数长度 标准为0x09
+    0x02, //bDescriptorType 描述符的类型 0x02为配置描述符
+    59, 0x00, //wTotalLength 配置信息的总长（包括配置、接口、端点、类和厂商描述符）
+    0x02, //bNumInterfaces 该配置所支持的接口数目
+    0x01, //bConfigurationValue 被SET_CONFIGURATION请求用作参数来选定
+    0x00, //iConfiguration 该配置的字符串描述符索引值，在SET_CONFIGURATION中用作选定配置的参数
+    0xA0, //bmAttributes D6：自供电 D5：远程唤醒 其他位保留。//若一个设备既能自供电又能使用总线供电，D6也要置1并在MaxPower指出需要从总线获取的电量
+    0x32, //MaxPower 该配置下的总线电源耗费量，为两倍此值（如0x32*2 = 100）mA
 
-    
-    0x09, 0x04, 0x00, 0x00, 0x01, 0x03, 0x01, 0x01, 0x00, //接口描述符,键盘
-    0x09, 0x21, 0x10, 0x01, 0x00, 0x01, 0x22, 0x3e, 0x00, //HID类描述符
-    0x07, 0x05, 0x81, 0x03, 0x08, 0x00, 0x0a,             //端点描述符
+    0x09, //bLength 描述符的字节数长度 标准为0x09
+    0x04, //bDescriptorType 描述符的类型 0x04为接口描述符
+    0x00, //bInterfaceNumber 接口号，当前配置支持的接口数组索引（从0开始）。//若该配置有俩接口，接下来的接口描述符此值就为1
+    0x00, //bAlternateSetting 可选设置的索引值。一个接口可以有多个接口描述符，靠此字段区分
+    0x01, //bNumEndpoints 除了USB设备必须支持的端点0外，此接口所包括的端点的个数。此值为0表示该接口只使用端点0。
+    0x03, //bInterfaceClass 接口所属的类值。为0表示为将来的标准保留。为FF表示此接口类由厂商说明。其他值查手册。0x03为HID类
+    0x00, //bInterfaceSublass 接口所属子类的值。根据手册以及bInterfaceClass的值来定，若上面的值为0，此值也要为0。
+    0x00, //bInterfaceProtocol 协议码，视手册以及上两者而定。上两者为0，此值也要为0。
+    0x00, //iInterface 此接口的字符串描述符的索引值。//HID类描述符↓
+
+    0x09, //bLength 描述符的字节数长度 标准为0x09
+    0x21, //bDescriptorType 描述符的类型 0x21为人机接口类描述符
+    0x10, 0x01, //bcdHID HID规范版本号的BCD码，此描述符所用版本为1.12
+    0x00, //bCountryCode 硬件目的国家的识别号码。不启用此功能则为0
+    0x01, //bNumDescriptors 支持的附属描述符数目。最小值为1：HID类至少有个报表描述符
+    0x22, //bDescriptorType 类别描述符的类型。只有报表描述符为0x22；还有个实体描述符则为0x23
+    0x4e, 0x00, //wDescriptorLength 报表描述符总长度//端点描述符↓
+
+    0x07, //bLength 描述符的字节数长度 标准为0x07
+    0x05, //bDescriptorType 描述符的类型 0x05为端点描述符
+    0x81, //bmEndpointAddress 低四位为端点号，最高位为0：OUT方向，为1：IN方向。其他位保留。
+    0x03, //bmAttributes 低两位为 00：控制传输；01：实时传输；10：批量传输；11：中断传输。其他位保留
+    0x08, 0x00, //bMaxPacketSize 端点收发的数据包最大净长度
+    0x0a, //bInterval 周期数据传输端点的时间间隙。对于批量和控制传输来说无意义//若该端点配置实时传输，此值必须为1（ms）；若该端点配置中断传输，此值为1～255（ms）
+
 
     0x09, 0x04, 0x01, 0x00, 0x01, 0x03, 0x01, 0x02, 0x00, //接口描述符,鼠标
     0x09, 0x21, 0x10, 0x01, 0x00, 0x01, 0x22, 0x34, 0x00, //HID类描述符
-    0x07, 0x05, 0x82, 0x03, 0x04, 0x00, 0x0a              //端点描述符
-
-
-    // 0x09：表示配置描述符的长度，即这个描述符总共有 9 个字节。
-    // 0x02：表示这是一个配置描述符（Configuration Descriptor）。
-    // 0x3b, 0x00：表示配置描述符的总长度，即 0x003B（59 字节）。
-    // 0x02：表示这个配置中有 2 个接口。
-    // 0x01：表示配置值，用于在 SET_CONFIGURATION 请求中选择这个配置。
-    // 0x00：表示配置字符串描述符的索引，0 表示没有字符串描述符。
-    // 0xA0：表示这个配置的属性，其中：
-    // 0x80 表示该配置是否需要总线供电。
-    // 0x20 表示是否支持远程唤醒。
-    // 0x40 表示是否支持自供电。
-    // 0x32：表示这个配置的最大功耗，单位是 2mA，即 0x32 * 2mA = 100mA
-
-
-    // 0x09, 0x02, 0x3b, 0x00, 0x02, 0x01, 0x00, 0xA0, 0x32, //配置描述符
-    // // 0x09, 0x02, 84, 0x00, 0x03, 0x01, 0x00, 0xA0, 0x32, //配置描述符
-    
-
+    0x07, 0x05, 0x82, 0x03, 0x04, 0x00, 0x0a,              //端点描述符
 
     
-    // 0x09, 0x04, 0x00, 0x00, 0x01, 0x03, 0x01, 0x01, 0x00, //接口描述符,键盘
+    // 0x09, 0x04, 0x02, 0x00, 0x01, 0x03, 0x01, 0x01, 0x00, //接口描述符,键盘
     // 0x09, 0x21, 0x10, 0x01, 0x00, 0x01, 0x22, 0x3e, 0x00, //HID类描述符
-    // 0x07, 0x05, 0x81, 0x03, 0x08, 0x00, 0x0a,             //端点描述符
+    // 0x07, 0x05, 0x83, 0x03, 0x08, 0x00, 0x0a,             //端点描述符
 
-    // 0x09, 0x04, 0x01, 0x00, 0x01, 0x03, 0x01, 0x02, 0x00, //接口描述符,鼠标
-    // 0x09, 0x21, 0x10, 0x01, 0x00, 0x01, 0x22, 0x34, 0x00, //HID类描述符
-    // 0x07, 0x05, 0x82, 0x03, 0x04, 0x00, 0x0a,              //端点描述符
-
-    // 0x09, //bLength 描述符的字节数长度 标准为0x09
-    // 0x04, //bDescriptorType 描述符的类型 0x04为接口描述符
-    // 0x02, //bInterfaceNumber 接口号，当前配置支持的接口数组索引（从0开始）。//若该配置有俩接口，接下来的接口描述符此值就为1
-    // 0x00, //bAlternateSetting 可选设置的索引值。一个接口可以有多个接口描述符，靠此字段区分
-    // 0x01, //bNumEndpoints 除了USB设备必须支持的端点0外，此接口所包括的端点的个数。此值为0表示该接口只使用端点0。
-    // 0x03, //bInterfaceClass 接口所属的类值。为0表示为将来的标准保留。为FF表示此接口类由厂商说明。其他值查手册。0x03为HID类
-    // 0x00, //bInterfaceSublass 接口所属子类的值。根据手册以及bInterfaceClass的值来定，若上面的值为0，此值也要为0。
-    // 0x00, //bInterfaceProtocol 协议码，视手册以及上两者而定。上两者为0，此值也要为0。
-    // 0x00, //iInterface 此接口的字符串描述符的索引值。//HID类描述符↓
-
-    // 0x09, //bLength 描述符的字节数长度 标准为0x09
-    // 0x21, //bDescriptorType 描述符的类型 0x21为人机接口类描述符
-    // 0x12, 0x01, //bcdHID HID规范版本号的BCD码，此描述符所用版本为1.12
-    // 0x00, //bCountryCode 硬件目的国家的识别号码。不启用此功能则为0
-    // 0x01, //bNumDescriptors 支持的附属描述符数目。最小值为1：HID类至少有个报表描述符
-    // 0x22, //bDescriptorType 类别描述符的类型。只有报表描述符为0x22；还有个实体描述符则为0x23
-    // 0x4e, 0x00, //wDescriptorLength 报表描述符总长度//端点描述符↓
-
-    // 0x07, //bLength 描述符的字节数长度 标准为0x07
-    // 0x05, //bDescriptorType 描述符的类型 0x05为端点描述符
-    // 0x81, //bmEndpointAddress 低四位为端点号，最高位为0：OUT方向，为1：IN方向。其他位保留。
-    // 0x03, //bmAttributes 低两位为 00：控制传输；01：实时传输；10：批量传输；11：中断传输。其他位保留
-    // 0x08, 0x00, //bMaxPacketSize 端点收发的数据包最大净长度
-    // 0x0a //bInterval 周期数据传输端点的时间间隙。对于批量和控制传输来说无意义//若该端点配置实时传输，此值必须为1（ms）；若该端点配置中断传输，此值为1～255（ms）
 };
+
+// const uint8_t MyCfgDescr[] = {// 配置描述符↓
+//     0x09, //bLength 描述符的字节数长度 标准为0x09
+//     0x02, //bDescriptorType 描述符的类型 0x02为配置描述符
+//     0x22, 0x00, //wTotalLength 配置信息的总长（包括配置、接口、端点、类和厂商描述符）
+//     0x01, //bNumInterfaces 该配置所支持的接口数目
+//     0x01, //bConfigurationValue 被SET_CONFIGURATION请求用作参数来选定
+//     0x00, //iConfiguration 该配置的字符串描述符索引值，在SET_CONFIGURATION中用作选定配置的参数
+//     0xA0, //bmAttributes D6：自供电 D5：远程唤醒 其他位保留。
+//     //若一个设备既能自供电又能使用总线供电，D6也要置1并在MaxPower指出需要从总线获取的电量
+//     0x32, //MaxPower 该配置下的总线电源耗费量，为两倍此值（如0x32*2 = 100）mA//接口描述符↓
+//     0x09, //bLength 描述符的字节数长度 标准为0x09
+//     0x04, //bDescriptorType 描述符的类型 0x04为接口描述符
+//     0x00, //bInterfaceNumber 接口号，当前配置支持的接口数组索引（从0开始）。
+//     //若该配置有俩接口，接下来的接口描述符此值就为1
+//     0x00, //bAlternateSetting 可选设置的索引值。一个接口可以有多个接口描述符，靠此字段区分
+//     0x01, //bNumEndpoints 除了USB设备必须支持的端点0外，此接口所包括的端点的个数。此值为0表示该接口只使用端点0。
+//     0x03, //bInterfaceClass 接口所属的类值。为0表示为将来的标准保留。为FF表示此接口类由厂商说明。其他值查手册。0x03为HID类
+//     0x00, //bInterfaceSublass 接口所属子类的值。根据手册以及bInterfaceClass的值来定，若上面的值为0，此值也要为0。
+//     0x00, //bInterfaceProtocol 协议码，视手册以及上两者而定。上两者为0，此值也要为0。
+//     0x00, //iInterface 此接口的字符串描述符的索引值。//HID类描述符↓
+//     0x09, //bLength 描述符的字节数长度 标准为0x09
+//     0x21, //bDescriptorType 描述符的类型 0x21为人机接口类描述符
+//     0x12, 0x01, //bcdHID HID规范版本号的BCD码，此描述符所用版本为1.12
+//     0x00, //bCountryCode 硬件目的国家的识别号码。不启用此功能则为0
+//     0x01, //bNumDescriptors 支持的附属描述符数目。最小值为1：HID类至少有个报表描述符
+//     0x22, //bDescriptorType 类别描述符的类型。只有报表描述符为0x22；还有个实体描述符则为0x23
+//     0x4e, 0x00, //wDescriptorLength 报表描述符总长度//端点描述符↓
+//     0x07, //bLength 描述符的字节数长度 标准为0x07
+//     0x05, //bDescriptorType 描述符的类型 0x05为端点描述符
+//     0x81, //bmEndpointAddress 低四位为端点号，最高位为0：OUT方向，为1：IN方向。其他位保留。
+//     0x03, //bmAttributes 低两位为 00：控制传输；01：实时传输；10：批量传输；11：中断传输。其他位保留
+//     0x08, 0x00, //bMaxPacketSize 端点收发的数据包最大净长度
+//     0x0a //bInterval 周期数据传输端点的时间间隙。对于批量和控制传输来说无意义//若该端点配置实时传输，此值必须为1（ms）；若该端点配置中断传输，此值为1～255（ms）
+// };
+
 
 /* USB速度匹配描述符 */
 constexpr uint8_t My_QueDescr[] = {0x0A, 0x06, 0x00, 0x02, 0xFF, 0x00, 0xFF, 0x40, 0x01, 0x00};
@@ -395,10 +400,10 @@ void UsbProcesser::handleGetDescriptor(){
                     len = 9;
                     break;
 
-                // case 2:
-                //     pDescr = (&MyCfgDescr[43 + 25]);
-                //     len = 9;
-                //     break;
+                case 2:
+                    pDescr = (&MyCfgDescr[68]);
+                    len = 9;
+                    break;
 
                 default:
                     /* 不支持的字符串描述符 */
